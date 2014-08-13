@@ -34,7 +34,7 @@ def parse_blob(str, **kwargs):
 
 
 colnames = ['time', 'tick', 'highline', 'lowline', 'diffline', 'rawadc']
-data = pd.read_csv('../captureTest.csv', names=colnames)
+data = pd.read_csv('../../../Users/ddevaz/Desktop/capture.csv', names=colnames, sep=' ')
 
 # Plotting
 sample_time = 50.0/1000 # s
