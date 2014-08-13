@@ -108,12 +108,11 @@ def main():
   parser.add_argument('--xmax',  type=int, required=False)
   parser.add_argument('--ymax',  type=int, required=False)
   parser.add_argument('-l', '--list', action='store_true', required=False, help='Lists available ports')
+  parser.add_argument('--log', type=int, required=False, help='Log the serial port to stdout')
   # parse args
   args = parser.parse_args()
 
-  if (args.list):
-    print(list_serial_ports())
-    return
+
 
   # required args
   strPort = args.port
@@ -122,6 +121,14 @@ def main():
   baud = args.baud if args.baud else 115200
   xmax = args.xmax if args.xmax else 500
   ymax = args.ymax if args.ymax else 5000
+
+  if (args.list):
+    print(list_serial_ports())
+    return
+  elif (args.log):
+    for i in range(args.log):
+      print(serial.Serial(strPort, baud).readline().strip().decode("utf-8"))
+    return
 
   # Configure number of signals.
   if (args.signals):
