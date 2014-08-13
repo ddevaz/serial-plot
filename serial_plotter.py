@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 serial_plotter.py
  
