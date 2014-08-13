@@ -67,24 +67,23 @@ class AnalogPlot:
 # main() function
 def main():
   # create parser
-  parser = argparse.ArgumentParser(description="LDR serial")
+  parser = argparse.ArgumentParser(description="serial plotter")
   # add expected arguments
   parser.add_argument('--port', dest='port', required=True)
   parser.add_argument('--baud', dest='baud', required=False)
   parser.add_argument('--signals', dest='signals', required=False)
+  parser.add_argument('--xmax', dest='xmax', required=False)
+  parser.add_argument('--ymax', dest='ymax', required=False)
   # parse args
   args = parser.parse_args()
-  
   # required args
   strPort = args.port
 
   # optional args
-  if args.signals:
-    strSignals = args.signals
-  if args.baud:
-    baud = int(args.baud)
-  else:
-    baud = 115200
+  strSignals = args.signals if args.signals else ''
+  baud = int(args.baud) if args.baud else 115200
+  xmax = int(args.xmax) if args.xmax else 500
+  ymax = int(args.ymax) if args.ymax else 5000
 
   # Configure number of signals.
   if (args.signals):
@@ -98,14 +97,14 @@ def main():
   print('reading from serial port %s...' % strPort)
  
   # plot parameters
-  analogPlot = AnalogPlot(strPort, baud, numXPoints, numSignals)
+  analogPlot = AnalogPlot(strPort, baud, xmax, numSignals)
   analogPlot.numSignals = numSignals
   analogPlot.indeces = indeces
  
   print('plotting data...')
   # set up animation
   fig = plt.figure()
-  ax = plt.axes(xlim=(0, numXPoints), ylim=(0, numYPoints))
+  ax = plt.axes(xlim=(0, xmax), ylim=(0, ymax))
   a = [ax.plot([],[])[0] for i in range(numSignals)]
 
   anim = animation.FuncAnimation(fig, analogPlot.update, 
@@ -115,6 +114,7 @@ def main():
   # axis labels
   plt.ylabel('Signals')
   plt.xlabel('# samples from now')
+  plt.title('Live Plot')
   
   # show plot
   plt.show()
