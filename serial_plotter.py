@@ -126,8 +126,11 @@ def main():
     print(list_serial_ports())
     return
   elif (args.log):
+    ser = serial.Serial(strPort, baud, timeout=1.0)
     for i in range(args.log):
-      print(serial.Serial(strPort, baud).readline().strip().decode("utf-8"))
+      print(ser.readline().strip().decode("utf-8"))
+    ser.flush()
+    ser.close()  
     return
 
   # Configure number of signals.
@@ -144,6 +147,7 @@ def main():
   analogPlot = AnalogPlot(strPort, baud, xmax, indeces)
  
   print('plotting signals %s...' % indeces)
+  print('Ctrl+c to exit')
   # set up animation
   fig = plt.figure()
   ax = plt.axes(xlim=(0, xmax), ylim=(0, ymax))
