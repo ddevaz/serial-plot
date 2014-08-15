@@ -15,17 +15,17 @@ def plot_data():
     # Create plot
     sample_time = 50.0/1000.0 # s
     motion_threshold_value = 621
-    t1 = [i*sample_time/60 for i,x in enumerate(data.tick)]
-    t = np.linspace(0,len(data.tick)*sample_time/60,len(data.tick))
-    threshhold_line = [motion_threshold_value for i in t1]
-    lines = plt.plot(t, data.rawadc,   'b.--')
+    t = np.linspace(0,data.tick.size*sample_time/60,data.tick.size)
+    threshhold_line = np.empty(t.size)
+    threshhold_line.fill(motion_threshold_value)
+    lines = plt.plot(t, data.rawadc, 'b.--', t, threshhold_line, 'r--')
 
     # configure plot
     plt.ylabel('(ADC counts)')
     plt.xlabel('Minutes from ' + data.time[0])
     plt.text(50, motion_threshold_value+20, 'Threshold = 621 counts', color='r')
     plt.title('Motion Sensor Output')
-   # plt.axis([0,t1[-1],0,4096])
+    plt.axis([0,t[-1],0,4096])
     # plt.setp(lines, ms=1)
     plt.show()
 
