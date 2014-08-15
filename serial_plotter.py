@@ -96,6 +96,12 @@ def list_serial_ports():
             pass
     return result
 
+def log_serial(strPort, baud, n):
+  ser = serial.Serial(strPort, baud, timeout=1.0)
+  for i in range(n):
+    print(ser.readline().strip().decode("utf-8"))
+  ser.flush()
+  ser.close()  
 
 # main() function
 def main():
@@ -126,11 +132,12 @@ def main():
     print(list_serial_ports())
     return
   elif (args.log):
-    ser = serial.Serial(strPort, baud, timeout=1.0)
-    for i in range(args.log):
-      print(ser.readline().strip().decode("utf-8"))
-    ser.flush()
-    ser.close()  
+    log_serial(strPort, baud, args.log)
+    # ser = serial.Serial(strPort, baud, timeout=1.0)
+    # for i in range(args.log):
+    #   print(ser.readline().strip().decode("utf-8"))
+    # ser.flush()
+    # ser.close()  
     return
 
   # Configure number of signals.
@@ -172,3 +179,4 @@ def main():
 # call main
 if __name__ == '__main__':
   main()
+  
