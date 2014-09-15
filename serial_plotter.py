@@ -167,6 +167,7 @@ def main():
   plt.ylabel('Signals')
   plt.xlabel('# samples from now')
   plt.title('Live Plot')
+  plt.grid()
   # show plot
   plt.show()
   
