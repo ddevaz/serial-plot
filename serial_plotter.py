@@ -97,7 +97,7 @@ def list_serial_ports():
     return result
 
 def log_serial(strPort, baud, n):
-  ser = serial.Serial(strPort, baud, timeout=1.0)
+  ser = serial.Serial(strPort, baud, timeout=5.0)
   for i in range(n):
     print(ser.readline().strip().decode("utf-8"))
   ser.flush()
