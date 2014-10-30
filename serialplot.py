@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 """
-serial_plotter.py
+serialplot.py
  
-Display serial data as scrolling plot.
+Display serial data as scrolling plot in (almost) real-time.
 
-Author: Dmitri De Vaz
+Author: Dmitri De Vaz 
+https://github.com/ddevaz 
+http://dmitridevaz.com
 
 """
 
@@ -116,7 +118,8 @@ def main():
   # add arguments
   parser.add_argument('-p', '--port',
                       help="COM port to use. Defaults to 'COM1' eg. --port 'COM1'.",
-                      required=True)
+                      required=False,
+                      default="COM1")
   
   parser.add_argument('-b', '--baud',
                       help="Baudrate in bits per second. Default is 115200.",
