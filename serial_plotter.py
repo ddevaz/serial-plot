@@ -4,20 +4,22 @@ serial_plotter.py
  
 Display serial data as scrolling plot.
 
+Author: Dmitri De Vaz
+
 """
- 
+
 import sys, serial, argparse
-# import numpy as np
-# from time import sleep
+
+# Fast lists:
 from collections import deque
- 
+
+# Plotting:
 import matplotlib.pyplot as plt 
 import matplotlib.animation as animation
  
 
-# plot class
 class AnalogPlot:
-  # constr
+  """This class handles adding new points to the plot window."""
   def __init__(self, strPort, baud, maxLen, indeces):
       # open serial port
       self.ser = serial.Serial(strPort, baud)
@@ -35,7 +37,7 @@ class AnalogPlot:
           buf.pop()
           buf.appendleft(val)
  
-  # add data
+  # adds a single data point
   def add(self, data):
       assert(len(data) == self.numSignals)
       for i in range(self.numSignals):
@@ -60,14 +62,13 @@ class AnalogPlot:
   # clean up
   def close(self):
       # close serial
-      self.ser.flush()
       self.ser.close()    
+      self.ser.flush()
  
 
 
 def list_serial_ports():
     """Lists serial ports
-
     :raises EnvironmentError:
         On unsupported or unknown platforms
     :returns:
@@ -96,6 +97,7 @@ def list_serial_ports():
             pass
     return result
 
+
 def log_serial(strPort, baud, n):
   ser = serial.Serial(strPort, baud, timeout=5.0)
   for i in range(n):
@@ -103,41 +105,68 @@ def log_serial(strPort, baud, n):
   ser.flush()
   ser.close()  
 
-# main() function
+
+
+
 def main():
-  # create parser
-  parser = argparse.ArgumentParser(description="Live Serial Plotter. Plots data coming in on the serial port. Variables should be floats or integers seperated by spaces and terminated by a newline \\n, eg. 1023.6 28 126")
-  # add expected arguments
-  parser.add_argument('-p', '--port',  required=False, default='COM1', help="COM port to use. Defaults to 'COM1' eg. --port 'COM1'.")
-  parser.add_argument('-b', '--baud',  type=int, required=False, help="Baudrate in bits per second. Default is 115200.")
-  parser.add_argument('-s', '--signals', type=int, nargs='+', required=False, help="Indeces of signals to plot seperated by spaces. Zero indexed. eg. To plot the 1st and 3rd variables: --signals 0 2")
-  parser.add_argument('--xmax',  type=int, required=False)
-  parser.add_argument('--ymax',  type=int, required=False)
-  parser.add_argument('-l', '--list', action='store_true', required=False, help='Lists available ports')
-  parser.add_argument('--log', type=int, required=False, help='Log the serial port to stdout')
+  parser = argparse.ArgumentParser(description="Live Serial Plotter. Plots data coming in on the serial port. \
+                                                Variables should be floats or integers seperated by spaces    \
+                                                and terminated by a newline \\n, eg. 1023.6 28 126")
+  
+  # add arguments
+  parser.add_argument('-p', '--port',
+                      help="COM port to use. Defaults to 'COM1' eg. --port 'COM1'.",
+                      required=True)
+  
+  parser.add_argument('-b', '--baud',
+                      help="Baudrate in bits per second. Default is 115200.",
+                      required=False, 
+                      type=int, 
+                      default=115200)
+  
+  parser.add_argument('-s', '--signals', 
+                      help="Indeces of signals to plot seperated by spaces. \
+                            Zero indexed. eg. To plot the 1st and 3rd variables: --signals 0 2",
+                      required=False, 
+                      type=int, 
+                      nargs='+')
+  
+  parser.add_argument('--xmax',  
+                      help="Specifies the time window to use for the plot in seconds.",
+                      required=False, 
+                      type=int, 
+                      default=500)
+
+  parser.add_argument('--ymax',  
+                      help="Specifies the range of the window to use for the plot.",
+                      required=False, 
+                      type=int, 
+                      default=5000)
+
+  parser.add_argument('-l', '--list', 
+                      help='Lists available ports',
+                      required=False,
+                      action='store_true')
+
+  parser.add_argument('--log', 
+                      help='Log the serial port to stdout',
+                      required=False,
+                      type=int)
+
   # parse args
   args = parser.parse_args()
-
-
-
   # required args
   strPort = args.port
-
   # optional args
-  baud = args.baud if args.baud else 115200
-  xmax = args.xmax if args.xmax else 500
-  ymax = args.ymax if args.ymax else 5000
+  baud = args.baud
+  xmax = args.xmax
+  ymax = args.ymax
 
   if (args.list):
     print(list_serial_ports())
     return
   elif (args.log):
-    log_serial(strPort, baud, args.log)
-    # ser = serial.Serial(strPort, baud, timeout=1.0)
-    # for i in range(args.log):
-    #   print(ser.readline().strip().decode("utf-8"))
-    # ser.flush()
-    # ser.close()  
+    log_serial(strPort, baud, args.log) 
     return
 
   # Configure number of signals.
@@ -145,6 +174,8 @@ def main():
     indeces = args.signals
     numSignals = len(indeces)
   else:
+    # Detect the number of signals based
+    # on the data.
     numSignals = len(serial.Serial(strPort, baud).readline().split())
     indeces = list(range(numSignals))
  
@@ -155,6 +186,7 @@ def main():
  
   print('plotting signals %s...' % indeces)
   print('Ctrl+c to exit')
+  
   # set up animation
   fig = plt.figure()
   ax = plt.axes(xlim=(0, xmax), ylim=(0, ymax))
