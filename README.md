@@ -23,7 +23,7 @@ eg. 1023.6 28 126
 
 
 
-**Args:**
+**Arguments:**
   
   **-p PORT, --port** 
   PORT  COM port to use. Defaults to 'COM1' eg. --port 'COM1'.
